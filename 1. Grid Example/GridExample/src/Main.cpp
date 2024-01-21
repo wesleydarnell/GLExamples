@@ -192,7 +192,9 @@ namespace Input {
 namespace Game {
 
 	Transform _camera;
-	float _camSpeed = 0.05f;
+	float _camSpeed = 0.025f;
+	float _moveSpeed = 0.05f;
+	float _fov = 1.0f;
 
 	void Init() {
 		_camera.position = glm::vec3(3.75f, 5.0f, 10.3f);
@@ -205,18 +207,50 @@ namespace Game {
 			GL::SetWindowShouldClose(true);
 		}
 
+		// Horizontal Plane
 		if (Input::KeyDown(GLFW_KEY_A)) {
 			_camera.position.x -= _camSpeed;
 		}
 		if (Input::KeyDown(GLFW_KEY_D)) {
-			_camera.position.x += _camSpeed;
+			_camera.position.x += _moveSpeed;
 		}
 		if (Input::KeyDown(GLFW_KEY_W)) {
-			_camera.position.z -= _camSpeed;
+			_camera.position.z -= _moveSpeed;
 		}
 		if (Input::KeyDown(GLFW_KEY_S)) {
-			_camera.position.z += _camSpeed;
+			_camera.position.z += _moveSpeed;
 		}
+
+		//Vertical Plane
+		if (Input::KeyDown(GLFW_KEY_SPACE)) {
+			_camera.position.y += _moveSpeed;
+		}
+		if (Input::KeyDown(GLFW_KEY_LEFT_SHIFT)) {
+			_camera.position.y -= _moveSpeed;
+		}
+
+		//Camera rotation off arrow keys
+		if (Input::KeyDown(GLFW_KEY_LEFT)) {
+			_camera.rotation.y += _camSpeed;
+		}
+		if (Input::KeyDown(GLFW_KEY_RIGHT)) {
+			_camera.rotation.y -= _camSpeed;
+		}
+		if (Input::KeyDown(GLFW_KEY_UP)) {
+			_camera.rotation.x += _camSpeed;
+		}
+		if (Input::KeyDown(GLFW_KEY_DOWN)) {
+			_camera.rotation.x -= _camSpeed;
+		}
+
+		//Adjust FOV with +/-
+		if (Input::KeyDown(GLFW_KEY_EQUAL)) {
+			_fov += 0.01f;
+		}
+		if (Input::KeyDown(GLFW_KEY_MINUS)) {
+			_fov -= 0.01f;
+		}
+
 	}
 
 	glm::mat4 GetViewMatrix() {
@@ -274,7 +308,7 @@ namespace Renderer {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 projection = glm::perspective(1.0f, 1920.0f / 1080.0f, NEAR_PLANE, FAR_PLANE);
+		glm::mat4 projection = glm::perspective(Game::_fov, 1920.0f / 1080.0f, NEAR_PLANE, FAR_PLANE);
 		glm::mat4 view = Game::GetViewMatrix();
 
 		_solidColorshader.Bind();
