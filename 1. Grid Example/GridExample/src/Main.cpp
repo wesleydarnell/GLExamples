@@ -76,6 +76,14 @@ namespace Util {
 		}
 		return str;
 	}
+
+	inline std::string Vec3ToString(glm::vec3 vec) {
+		std::string str = "(";
+		str += std::to_string(vec.x) + ", ";
+		str += std::to_string(vec.y) + ", ";
+		str += std::to_string(vec.z) + ")";
+		return str;
+	}
 }
 
 struct Shader {
@@ -256,6 +264,10 @@ namespace Game {
 	glm::mat4 GetViewMatrix() {
 		return glm::inverse(_camera.to_mat4());
 	}
+
+	float GetFOV() {
+		return _fov;
+	}
 }
 
 namespace Renderer {
@@ -308,7 +320,7 @@ namespace Renderer {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 projection = glm::perspective(Game::_fov, 1920.0f / 1080.0f, NEAR_PLANE, FAR_PLANE);
+		glm::mat4 projection = glm::perspective(Game::GetFOV(), 1920.0f / 1080.0f, NEAR_PLANE, FAR_PLANE);
 		glm::mat4 view = Game::GetViewMatrix();
 
 		_solidColorshader.Bind();
